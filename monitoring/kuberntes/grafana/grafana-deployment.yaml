@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: moni
+spec:
+  selector:
+    matchLabels:
+      run: grafana
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: grafana
+    spec:
+      initContainers:
+      - name: permisos-confg
+        image: busybox:latest
+        command: ["sh", "-c", "chmod -R 777 /var/lib/grafana"]
+        volumeMounts:
+        - name: grafana-data
+          mountPath: /var/lib/grafana
+      containers:
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3001
+              name: web
+              protocol: TCP
+          volumeMounts:
+            - name: grafana-data
+              mountPath: /var/lib/grafana
+              subPath: lib
+      restartPolicy: Always
+      
+      volumes:
+        - name: grafana-data
+          persistentVolumeClaim:
+            claimName: grafana-data

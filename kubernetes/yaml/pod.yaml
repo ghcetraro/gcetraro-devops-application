@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-app
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: test-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: test-app
+    spec:
+      containers:
+      - name: test-app
+        image: 052965077586.dkr.ecr.us-east-1.amazonaws.com/test-app:01
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: config-volume
+          mountPath: "/db"
+        resources:
+            limits:
+              cpu: "500m"
+            requests:
+              cpu: "50m"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: "test-app"

@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  influxdb:
+    image: influxdb:1.8.3
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "8086:8086"
+    volumes:
+      - /data/swarm/data/influxdb:/var/lib/influxdb
+    networks:
+      - core-infra
+  grafana:
+    image: grafana/grafana:7.2.1
+    deploy:
+      mode: replicated
+      replicas: 1
+    ports:
+      - "3000:3000"
+    volumes:
+      - /data/swarm/data/grafana:/var/lib/grafana
+    networks:
+      - core-infra
+
+networks:
+  core-infra:
+    external: true
+

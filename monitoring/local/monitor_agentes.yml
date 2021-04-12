@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  telegraf:
+    image: telegraf:latest
+    deploy:
+      mode: global
+    environment:
+      - HOST_PROC=/rootfs/proc
+      - HOST_SYS=/rootfs/sys
+      - HOST_ETC=/rootfs/etc
+      - HOST_MOUNT_PREFIX=/hostfs
+    volumes:
+      - /data/swarm/data/telegraf:/etc/telegraf:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/hostfs:ro
+      - /sys:/rootfs/sys:ro
+      - /proc:/rootfs/proc:ro
+    networks:
+      - core-infra
+
+networks:
+  core-infra:
+    external: true

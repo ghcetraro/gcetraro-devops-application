@@ -1,0 +1,23 @@
+
+FROM %REGISTRY%/template/node:12.16.1-buster-slim as builder
+
+RUN npm install -g typescript ts-node nodemon
+WORKDIR /app
+COPY . .
+RUN npm install && npm run build
+
+# dst
+FROM %REGISTRY%/template/node:12.16.1-buster-slim as dst
+
+WORKDIR /app
+COPY package*.json ./
+
+# Be0x83: se agregó el argumento production para no descar las dependencias de development.
+RUN npm install --production
+COPY --from=builder /app/build/ ./build/
+
+# Be0x83: se agregó la configuración para la base de datos.
+COPY ormconfig.build.js ./ormconfig.js
+
+EXPOSE %PORT%
+CMD ["node", "/app/build/index.js"]

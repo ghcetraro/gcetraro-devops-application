@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: telegraf
+  namespace: moni
+  labels:
+    k8s-app: telegraf
+spec:
+  selector:
+    matchLabels:
+      name: telegraf
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        name: telegraf
+    spec:
+      containers:
+      - name: telegraf
+        image: telegraf:1.10.0
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 500Mi
+        volumeMounts:
+            - mountPath: /etc/telegraf/telegraf.conf
+              name: telegraf-config
+              subPath: telegraf.conf
+              readOnly: true
+        envFrom:
+          - secretRef:
+              name: telegraf-secrets
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: "HOST_PROC"
+          value: "/rootfs/proc"
+        - name: "HOST_SYS"
+          value: "/rootfs/sys"
+        - name: "HOST_ETC"
+          value: "/rootfs/etc"
+        - name: "HOST_DEV"
+          value: "/rootfs/dev"        
+        volumeMounts:
+        - name: proc
+          mountPath: /rootfs/proc
+          readOnly: true
+        - name: sys
+          mountPath: /rootfs/sys
+          readOnly: true
+        - name: etc
+          mountPath: /rootfs/etc
+          readOnly: true
+        - name: dev
+          mountPath: /rootfs/dev
+          readOnly: true
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+          readOnly: true
+        - name: containers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: utmp
+          mountPath: /var/run/utmp
+          readOnly: true
+        - name: telegraf-config
+          mountPath: /etc/telegraf
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: proc
+          hostPath:
+            path: /proc
+        - name: sys
+          hostPath:
+            path: /sys
+        - name: etc
+          hostPath:
+            path: /etc
+        - name: dev
+          hostPath:
+            path: /dev
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+        - name: containers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: utmp
+          hostPath:
+            path: /var/run/utmp
+        - name: telegraf-config
+          configMap:
+            name: telegraf-config

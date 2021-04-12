@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telegraf-config
+  namespace: moni
+  labels:
+    k8s-app: telegraf
+data:
+  telegraf.conf: |+
+    [global_tags]
+    [agent]
+      interval = "60s"
+      round_interval = true
+      metric_buffer_limit = 10000
+      collection_jitter = "0s"
+      flush_jitter = "2s"
+      flush_interval = "10s"
+      precision = ""
+      debug = false
+      hostname = "$HOSTNAME"
+      metric_batch_size = 1000
+      quiet = true
+      logfile = ""
+
+    [[inputs.cpu]]
+      percpu = true
+      totalcpu = true
+      collect_cpu_time = false
+      report_active = false
+    [[inputs.disk]]
+      ignore_fs = ["tmpfs", "devtmpfs", "devfs"]
+    [[inputs.diskio]]
+    [[inputs.kernel]]
+    [[inputs.mem]]
+    [[inputs.processes]]
+    [[inputs.swap]]
+    [[inputs.system]]
+    [[inputs.docker]]
+      endpoint = "unix:///var/run/docker.sock"
+      container_names = []
+      docker_label_include = []
+      gather_services = true
+    #
+    [[inputs.net]]
+    [[inputs.netstat]]
+    [[inputs.disk]]
+    #
+    [[outputs.influxdb]]
+      urls = ["$INFLUXDB_URL"]
+      database = "$INFLUXDB_DB"
+      username = "$INFLUXDB_USER"
+      password = "$INFLUXDB_USER_PASSWORD"

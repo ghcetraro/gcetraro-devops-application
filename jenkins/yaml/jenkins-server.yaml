@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-server
+  namespace: devops-tools
+spec:
+  selector:
+    matchLabels:
+      run: jenkins-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: jenkins-server
+    spec:
+      initContainers:
+      - name: volume-mount-hack
+        image: busybox:latest
+        command: ["sh", "-c", "chmod -R 777 /var/jenkins_home"]
+        volumeMounts:
+        - name: jenkins-server
+          mountPath: /var/jenkins_home
+      - name: permisos
+        image: busybox:latest
+        command: ["sh", "-c", "chmod 666 /var/run/docker.sock"]
+        volumeMounts:
+        - name: dockersock
+          mountPath: /var/run/docker.sock
+      containers:
+        - name: jenkins-server
+          image: 052965077586.dkr.ecr.us-east-1.amazonaws.com/jenkins-server:01
+          ports:
+          - containerPort: 8080
+            name: web
+            protocol: TCP
+          - containerPort: 5000
+            name: docker
+            protocol: TCP
+          volumeMounts:
+            - name: jenkins-server
+              mountPath: /var/jenkins_home
+            - name: dockersock
+              mountPath: "/var/run/docker.sock"
+            - name: intercambio
+              mountPath: "/var/jenkins_home/workspace"
+      serviceAccountName: jenkins-admin
+      imagePullSecrets:
+        - name: docker-registry
+      volumes:
+        - name: jenkins-server
+          persistentVolumeClaim:
+            claimName: jenkins-server
+        - name: intercambio
+          hostPath:
+            path: /var/jenkins_home/workspace
+        - name: dockersock
+          hostPath:
+            path: /var/run/docker.sock
+            type: File

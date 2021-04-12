@@ -1,0 +1,79 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "jorgito",
+      "name": "Jorge Gomez",
+      "bio": "Ingeniero"
+    },
+    {
+      "id": 2,
+      "username": "diegote",
+      "name": "Diego Facha",
+      "bio": "Aventurero & Fotografo"
+    },
+    {
+      "id": 3,
+      "username": "fabrip",
+      "name": "Fabricio Palanca",
+      "bio": "Barbero & Peluquero de famosos aka Su Gimenez"
+    },
+    {
+      "id": 4,
+      "username": "juanse",
+      "name": "Juan Gutierrez",
+      "bio": "Cantante Ratones Paranoicos"
+    }
+  ],
+
+  "threads": [
+    {
+      "id": 1,
+      "title": "Que pasa con los ratones que no sacan discos nuevos?",
+      "createdBy": 4
+    },
+    {
+      "id": 2,
+      "title": "Fiesta en Pto Madero mañana a las 15hs",
+      "createdBy": 3
+    },
+    {
+      "id": 3,
+      "title": "Buscando nueva viola",
+      "createdBy": 1
+    }
+  ],
+
+  "posts": [
+    {
+      "thread": 1,
+      "text": "Aguanten los ratones!!",
+      "user": 4
+    },
+    {
+      "thread": 1,
+      "text": "Como llueve!!!",
+      "user": 2
+    },
+    {
+      "thread": 2,
+      "text": "Los espero en la fiesta mañana",
+      "user": 3
+    },
+    {
+      "thread": 2,
+      "text": "Como esta esa barba!!",
+      "user": 2
+    },
+    {
+      "thread": 2,
+      "text": "Tengo una telecaster para vender",
+      "user": 1
+    },
+    {
+      "thread": 3,
+      "text": "Necesito una nueva viola para el proximo disco",
+      "user": 1
+    }
+  ]
+}
